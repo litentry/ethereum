@@ -451,7 +451,8 @@ pub struct EIP2930Transaction {
 	pub value: U256,
 	pub input: Bytes,
 	pub access_list: AccessList,
-	pub odd_y_parity: bool,
+	// EIP-155
+	pub v: u8,
 	pub r: H256,
 	pub s: H256,
 }
@@ -477,7 +478,7 @@ impl Encodable for EIP2930Transaction {
 		s.append(&self.value);
 		s.append(&self.input);
 		s.append_list(&self.access_list);
-		s.append(&self.odd_y_parity);
+		s.append(&self.v);
 		s.append(&U256::from_big_endian(&self.r[..]));
 		s.append(&U256::from_big_endian(&self.s[..]));
 	}
@@ -498,7 +499,7 @@ impl Decodable for EIP2930Transaction {
 			value: rlp.val_at(5)?,
 			input: rlp.val_at(6)?,
 			access_list: rlp.list_at(7)?,
-			odd_y_parity: rlp.val_at(8)?,
+			v: rlp.val_at(8)?,
 			r: {
 				let mut rarr = [0_u8; 32];
 				rlp.val_at::<U256>(9)?.to_big_endian(&mut rarr);
@@ -529,7 +530,8 @@ pub struct EIP1559Transaction {
 	pub value: U256,
 	pub input: Bytes,
 	pub access_list: AccessList,
-	pub odd_y_parity: bool,
+	// EIP-155
+	pub v: u8,
 	pub r: H256,
 	pub s: H256,
 }
@@ -556,7 +558,7 @@ impl Encodable for EIP1559Transaction {
 		s.append(&self.value);
 		s.append(&self.input);
 		s.append_list(&self.access_list);
-		s.append(&self.odd_y_parity);
+		s.append(&self.v);
 		s.append(&U256::from_big_endian(&self.r[..]));
 		s.append(&U256::from_big_endian(&self.s[..]));
 	}
@@ -578,7 +580,7 @@ impl Decodable for EIP1559Transaction {
 			value: rlp.val_at(6)?,
 			input: rlp.val_at(7)?,
 			access_list: rlp.list_at(8)?,
-			odd_y_parity: rlp.val_at(9)?,
+			v: rlp.val_at(9)?,
 			r: {
 				let mut rarr = [0_u8; 32];
 				rlp.val_at::<U256>(10)?.to_big_endian(&mut rarr);
@@ -831,7 +833,7 @@ mod tests {
 					storage_keys: vec![],
 				},
 			],
-			odd_y_parity: false,
+			v: 37,
 			r: hex!("36b241b061a36a32ab7fe86c7aa9eb592dd59018cd0443adc0903590c16b02b0").into(),
 			s: hex!("5edcc541b4741c5cc6dd347c5ed9577ef293a62787b4510465fadbfe39ee4094").into(),
 		});
@@ -870,7 +872,7 @@ mod tests {
 					storage_keys: vec![],
 				},
 			],
-			odd_y_parity: false,
+			v: 37,
 			r: hex!("36b241b061a36a32ab7fe86c7aa9eb592dd59018cd0443adc0903590c16b02b0").into(),
 			s: hex!("5edcc541b4741c5cc6dd347c5ed9577ef293a62787b4510465fadbfe39ee4094").into(),
 		});
